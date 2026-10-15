@@ -529,20 +529,18 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 
 ---
 
-## 👤 Author
+## 👥 Team
 
 <div align="center">
 
-**Aditya Dixit**
-**Vaibhav Tripathi**
-**Atharva Gupta**
-**Sonakshi Verma**
-**Aastha Tiwari**
-**Satakshi Saxena**
-
-[![GitHub](https://img.shields.io/badge/GitHub-Aditya--dxt-181717?style=for-the-badge&logo=github)](https://github.com/Aditya-dxt)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-aditya--dixit--fs-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/aditya-dixit-fs)
-[![Portfolio](https://img.shields.io/badge/Portfolio-aditya--dixit.vercel.app-000000?style=for-the-badge&logo=vercel)](https://aditya-dixit.vercel.app)
+| 👤 Member | 🛠️ Role | 🔗 GitHub |
+|:---:|:---:|:---:|
+| **Aditya Dixit** | _Add role_ | [@Aditya-dxt](https://github.com/Aditya-dxt) |
+| **Vaibhav Tripathi** | _Add role_ | [@github-username](https://github.com/github-username) |
+| **Atharva Gupta** | _Add role_ | [@github-username](https://github.com/github-username) |
+| **Sonakshi Verma** | _Add role_ | [@github-username](https://github.com/github-username) |
+| **Aastha Tiwari** | _Add role_ | [@github-username](https://github.com/github-username) |
+| **Satakshi Saxena** | _Add role_ | [@github-username](https://github.com/github-username) |
 
 <br/>
 
