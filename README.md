@@ -536,11 +536,11 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 | 👤 Member | 🛠️ Role | 🔗 GitHub |
 |:---:|:---:|:---:|
 | **Aditya Dixit** | _Add role_ | [@Aditya-dxt](https://github.com/Aditya-dxt) |
-| **Vaibhav Tripathi** | _Add role_ | [@github-username](https://github.com/github-username) |
-| **Atharva Gupta** | _Add role_ | [@github-username](https://github.com/github-username) |
-| **Sonakshi Verma** | _Add role_ | [@github-username](https://github.com/github-username) |
-| **Aastha Tiwari** | _Add role_ | [@github-username](https://github.com/github-username) |
-| **Satakshi Saxena** | _Add role_ | [@github-username](https://github.com/github-username) |
+| **Vaibhav Tripathi** | _Add role_ | [@github-username](https://github.com/indeedvaibhav) |
+| **Atharva Gupta** | _Add role_ | [@github-username](https://github.com/atharvagupta686-prog) |
+| **Sonakshi Verma** | _Add role_ | [@github-username](https://github.com/sonakshiv559-spec) |
+| **Aastha Tiwari** | _Add role_ | [@github-username](https://github.com/Aasthatiwary13) |
+| **Satakshi Saxena** | _Add role_ | [@github-username](https://github.com/satakshi-30) |
 
 <br/>
 
