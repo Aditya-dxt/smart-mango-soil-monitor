@@ -1,0 +1,18 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports: ["1883:1883"]
+    volumes: ["./deploy/mosquitto.conf:/mosquitto/config/mosquitto.conf"]
+  api:
+    build: { context: ., dockerfile: deploy/Dockerfile }
+    ports: ["8000:8000"]
+    environment:
+      MQTT_HOST: mosquitto
+      # API_KEY: change-me
+      # LAT: "26.45"
+      # LON: "80.33"
+      # ANTHROPIC_API_KEY: sk-...   # optional farmer-friendly explanations
+    volumes: ["orchard-data:/data"]
+    depends_on: [mosquitto]
+volumes:
+  orchard-data:

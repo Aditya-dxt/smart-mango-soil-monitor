@@ -1,0 +1,1872 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bhoomi-IQ™ | Precision Soil & Mango Cultivar Feasibility Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #0c140d;
+      --bg-card: #142016;
+      --bg-card-hover: #192a1c;
+      --bg-glass: rgba(20, 32, 22, 0.82);
+      --border-subtle: #233827;
+      --border-bright: #36573c;
+      
+      --text-main: #f0f7f1;
+      --text-muted: #8fa893;
+      --text-dim: #607563;
+
+      --mango-gold: #ffb703;
+      --mango-amber: #fb8500;
+      --mango-ripe: #fd9e02;
+      --emerald-500: #10b981;
+      --emerald-400: #34d399;
+      --emerald-600: #059669;
+      --leaf-green: #2e7d32;
+      --sky-blue: #38bdf8;
+      --danger-red: #ef4444;
+      --purple-accent: #a855f7;
+
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(251, 133, 0, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+    }
+
+    /* Top Navigation Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: var(--bg-glass);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #fb8500, #10b981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(251, 133, 0, 0.3);
+    }
+    .brand-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-text h1 span {
+      background: linear-gradient(90deg, #ffb703, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+    .badge-pill.active {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--emerald-400);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald-400);
+      box-shadow: 0 0 8px var(--emerald-400);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .select-zone {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--emerald-600), var(--emerald-500));
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #d97706, #fb8500);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(251, 133, 0, 0.3);
+    }
+    .btn-gold:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Section Headers */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .section-title i {
+      color: var(--mango-gold);
+    }
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* KPI Cards Grid: 8 extracted parameters */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-icon-bubble {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .icon-emerald { background: rgba(16, 185, 129, 0.15); color: var(--emerald-400); }
+    .icon-amber { background: rgba(251, 133, 0, 0.15); color: var(--mango-gold); }
+    .icon-blue { background: rgba(56, 189, 248, 0.15); color: var(--sky-blue); }
+    .icon-purple { background: rgba(168, 85, 247, 0.15); color: var(--purple-accent); }
+
+    .card-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .card-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+    .card-unit {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .card-status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .status-ok { background: rgba(16, 185, 129, 0.18); color: var(--emerald-400); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-warn { background: rgba(251, 133, 0, 0.18); color: var(--mango-gold); border: 1px solid rgba(251, 133, 0, 0.3); }
+    .status-bad { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .gauge-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+    .card-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Hero Feasibility Banner */
+    .feasibility-hero {
+      background: linear-gradient(135deg, rgba(20, 32, 22, 0.95), rgba(30, 48, 33, 0.9)),
+                  radial-gradient(circle at 100% 0%, rgba(251, 133, 0, 0.15) 0%, transparent 60%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    @media (max-width: 900px) {
+      .feasibility-hero { grid-template-columns: 1fr; }
+    }
+    .hero-info h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-info p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .health-pill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .health-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .health-note i {
+      margin-top: 3px;
+      color: var(--emerald-400);
+    }
+    .top-pick-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 183, 3, 0.3);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .top-pick-crown {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb703, #fb8500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(251, 133, 0, 0.4);
+    }
+    .top-pick-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mango-gold);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .top-pick-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .top-pick-score {
+      font-size: 38px;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--emerald-400);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    /* Variety Feasibility Cards Grid */
+    .variety-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .variety-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .variety-tab {
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .variety-tab.active {
+      background: var(--emerald-500);
+      color: #fff;
+      border-color: var(--emerald-500);
+    }
+    .variety-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+    .variety-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.2s ease;
+    }
+    .variety-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-sm);
+    }
+    .v-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .v-title h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .v-title span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .v-score-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .v-score-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .v-status-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    .badge-emerald { background: rgba(16, 185, 129, 0.18); color: var(--emerald-400); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-amber { background: rgba(251, 133, 0, 0.18); color: var(--mango-gold); border: 1px solid rgba(251, 133, 0, 0.3); }
+    .badge-rose { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .v-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .v-metric-bars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+    }
+    .v-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .v-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .v-bar-header span:last-child {
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .v-bar-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .v-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: var(--emerald-400);
+    }
+
+    .v-specs {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 10px;
+    }
+    .v-specs div {
+      display: flex;
+      justify-content: space-between;
+    }
+    .v-specs strong {
+      color: var(--text-main);
+    }
+    .v-advice {
+      background: rgba(251, 133, 0, 0.08);
+      border-left: 3px solid var(--mango-gold);
+      padding: 8px 12px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 11.5px;
+      color: #fce7b0;
+      line-height: 1.4;
+    }
+
+    /* Dual Column Layout: Simulator & AI Chatbot */
+    .dual-col-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .dual-col-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Simulator Panel */
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .form-group label span {
+      color: var(--mango-gold);
+    }
+    .form-control {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--emerald-400);
+    }
+
+    /* AI Chatbot Container */
+    .chat-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      height: 520px;
+      box-shadow: var(--shadow-sm);
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+      margin-bottom: 12px;
+    }
+    .chat-bot-id {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-bot-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #0284c7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+    }
+    .chat-bot-text h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .chat-bot-text p {
+      font-size: 11px;
+      color: var(--emerald-400);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .chat-quick-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      scrollbar-width: thin;
+    }
+    .chip {
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--emerald-500);
+      color: var(--emerald-400);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-right: 6px;
+      margin-bottom: 12px;
+    }
+    .chat-msg {
+      display: flex;
+      gap: 10px;
+      max-width: 88%;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .chat-bubble {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .chat-msg.bot .chat-bubble {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-top-left-radius: 4px;
+    }
+    .chat-msg.user .chat-bubble {
+      background: linear-gradient(135deg, var(--emerald-600), var(--emerald-500));
+      color: #fff;
+      border-top-right-radius: 4px;
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+    }
+    .chat-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: var(--emerald-400);
+    }
+
+    /* RL Agent Decision Card & Charts */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+    .chart-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      grid-column: 1 / -1;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Floating Chat Trigger Button */
+    .chat-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      z-index: 99;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--mango-amber), var(--emerald-500));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(251, 133, 0, 0.45);
+      border: none;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .chat-fab:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Notification Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      right: 28px;
+      z-index: 100;
+      background: var(--bg-card);
+      border: 1px solid var(--emerald-400);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-seedling"></i>
+      </div>
+      <div class="brand-text">
+        <h1>Bhoomi-<span>IQ</span>™</h1>
+        <p>Intelligent Soil Telemetry & Mango Feasibility Platform</p>
+      </div>
+    </div>
+
+    <div class="header-badges">
+      <div class="badge-pill active">
+        <span class="pulse-dot"></span>
+        <span id="node-status">ESP32 Ingest: Active</span>
+      </div>
+      <div class="badge-pill">
+        <i class="fa-solid fa-brain" style="color: var(--purple-accent);"></i>
+        <span id="policy-status">DQN Planner</span>
+      </div>
+      <div class="badge-pill">
+        <i class="fa-solid fa-seedling" style="color: var(--emerald-400);"></i>
+        <span id="stage-status">Stage: Pre-Flowering</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <select id="zone-select" class="select-zone">
+        <option value="zone1">Zone 1 (North Block - Alphonso/Kesar)</option>
+        <option value="zone2">Zone 2 (South Block - Dasheri/Langra)</option>
+        <option value="zone3">Zone 3 (East Block - Totapuri/Amrapali)</option>
+      </select>
+      <button id="refresh-btn" class="btn" title="Refresh Live Readings">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
+      <button id="run-agent-btn" class="btn btn-primary">
+        <i class="fa-solid fa-bolt"></i> Run Agent
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content -->
+  <main>
+
+    <!-- SECTION 1: EXTRACTED SENSOR PARAMETERS (N, P, K, MOISTURE, TEMP, PH, HUMIDITY, SOIL TYPE) -->
+    <section>
+      <div class="section-head">
+        <div>
+          <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Extracted Soil & Climate Parameters</h2>
+          <p class="section-desc">Live multi-spectral soil sensor and weather telemetry extracted from node sensors</p>
+        </div>
+        <div id="last-updated" style="font-size: 12px; color: var(--text-dim);">Connecting to node...</div>
+      </div>
+
+      <div class="kpi-grid">
+
+        <!-- 1. NITROGEN (N) -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-atom"></i> Nitrogen (N)</span>
+            <div class="card-icon-bubble icon-emerald"><i class="fa-solid fa-leaf"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-n">--</div>
+            <div class="card-unit">mg/kg</div>
+            <span class="card-status-badge status-ok" id="badge-n">Optimal</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-n" style="width: 70%; background: var(--emerald-400);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Target: 120 - 180 mg/kg</span>
+            <span id="sub-n">Good foliage vigour</span>
+          </div>
+        </div>
+
+        <!-- 2. PHOSPHORUS (P) -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-dna"></i> Phosphorus (P)</span>
+            <div class="card-icon-bubble icon-amber"><i class="fa-solid fa-seedling"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-p">--</div>
+            <div class="card-unit">mg/kg</div>
+            <span class="card-status-badge status-ok" id="badge-p">Healthy</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-p" style="width: 60%; background: var(--mango-gold);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Target: 20 - 45 mg/kg</span>
+            <span id="sub-p">Panicle & Root Support</span>
+          </div>
+        </div>
+
+        <!-- 3. POTASSIUM (K) -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-cubes-stacked"></i> Potassium (K)</span>
+            <div class="card-icon-bubble icon-purple"><i class="fa-solid fa-shield-halved"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-k">--</div>
+            <div class="card-unit">mg/kg</div>
+            <span class="card-status-badge status-ok" id="badge-k">Optimal</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-k" style="width: 75%; background: var(--purple-accent);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Target: 150 - 250 mg/kg</span>
+            <span id="sub-k">High Fruit Brix / Weight</span>
+          </div>
+        </div>
+
+        <!-- 4. SOIL PH -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-flask-vial"></i> Soil pH</span>
+            <div class="card-icon-bubble icon-blue"><i class="fa-solid fa-vial"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-ph">--</div>
+            <div class="card-unit">pH level</div>
+            <span class="card-status-badge status-ok" id="badge-ph">Optimal</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-ph" style="width: 65%; background: var(--sky-blue);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Ideal: 5.8 - 7.2</span>
+            <span id="sub-ph">Nutrient Availability High</span>
+          </div>
+        </div>
+
+        <!-- 5. SOIL MOISTURE -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-droplet"></i> Soil Moisture</span>
+            <div class="card-icon-bubble icon-blue"><i class="fa-solid fa-water"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-moisture">--</div>
+            <div class="card-unit">VWC %</div>
+            <span class="card-status-badge status-ok" id="badge-moisture">In Target</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-moisture" style="width: 55%; background: var(--emerald-400);"></div>
+          </div>
+          <div class="card-subtext">
+            <span id="target-band-text">Target: 12 - 20 %</span>
+            <span id="sub-moisture">Regulated Deficit OK</span>
+          </div>
+        </div>
+
+        <!-- 6. TEMPERATURE -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-temperature-half"></i> Temperature</span>
+            <div class="card-icon-bubble icon-amber"><i class="fa-solid fa-sun"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-temp">--</div>
+            <div class="card-unit">°C Air</div>
+            <span class="card-status-badge status-ok" id="badge-temp">Normal</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-temp" style="width: 60%; background: var(--mango-gold);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Soil Temp: <b id="val-soil-temp">--</b> °C</span>
+            <span>Optimal: 22 - 36 °C</span>
+          </div>
+        </div>
+
+        <!-- 7. HUMIDITY -->
+        <div class="card">
+          <div class="card-top">
+            <span class="card-label"><i class="fa-solid fa-cloud"></i> Relative Humidity</span>
+            <div class="card-icon-bubble icon-blue"><i class="fa-solid fa-wind"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-humidity">--</div>
+            <div class="card-unit">% RH</div>
+            <span class="card-status-badge status-ok" id="badge-humidity">Safe</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div class="gauge-bar-fill" id="gauge-humidity" style="width: 50%; background: var(--sky-blue);"></div>
+          </div>
+          <div class="card-subtext">
+            <span>Powdery Mildew Risk: Low</span>
+            <span>Comfort Zone</span>
+          </div>
+        </div>
+
+        <!-- 8. SOIL TYPE CLASSIFICATION -->
+        <div class="card" style="border-color: rgba(251, 133, 0, 0.35);">
+          <div class="card-top">
+            <span class="card-label" style="color: var(--mango-gold);"><i class="fa-solid fa-mountain"></i> Soil Texture Type</span>
+            <div class="card-icon-bubble icon-amber"><i class="fa-solid fa-layer-group"></i></div>
+          </div>
+          <div class="card-value-row">
+            <div class="card-val" id="val-soil-type" style="font-size: 24px;">Alluvial Loam</div>
+          </div>
+          <div class="card-subtext" style="margin-top: 10px;">
+            <span>Permeability: High</span>
+            <span>Aeration: 8.8 / 10</span>
+          </div>
+          <div class="card-subtext" style="margin-top: 6px;">
+            <span>Depth: > 2.5 meters</span>
+            <span>Drainage: Excellent</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: MANGO CULTIVAR FEASIBILITY & SOIL ENGINE -->
+    <section>
+      <div class="section-head">
+        <div>
+          <h2 class="section-title"><i class="fa-solid fa-award"></i> Mango Plant Feasibility & Soil Compatibility Engine</h2>
+          <p class="section-desc">Scientific ICAR-benchmarked evaluation of which commercial mango cultivars will thrive in your soil</p>
+        </div>
+      </div>
+
+      <!-- Hero Feasibility Banner -->
+      <div class="feasibility-hero">
+        <div class="hero-info">
+          <h2><i class="fa-solid fa-chart-pie" style="color: var(--emerald-400);"></i> Soil Compatibility Diagnostics</h2>
+          <p id="hero-summary-text">
+            Evaluating soil texture, acidity/alkalinity balance, available macronutrients, and moisture dynamics to rank mango plant feasibility.
+          </p>
+          <div class="health-pill-list" id="soil-health-notes">
+            <!-- Populated dynamically -->
+            <div class="health-note"><i class="fa-solid fa-circle-check"></i> Loading soil health diagnostics...</div>
+          </div>
+        </div>
+
+        <div class="top-pick-box">
+          <div class="top-pick-crown"><i class="fa-solid fa-crown"></i></div>
+          <div class="top-pick-title">Most Feasible Mango Plant</div>
+          <div class="top-pick-name" id="hero-top-variety">Calculating...</div>
+          <div class="top-pick-score" id="hero-top-score">--%</div>
+          <span class="card-status-badge status-ok" id="hero-top-badge">Highly Recommended</span>
+        </div>
+      </div>
+
+      <!-- Variety Filter & Grid -->
+      <div style="margin-top: 24px;">
+        <div class="variety-controls">
+          <div class="variety-tabs">
+            <button class="variety-tab active" data-filter="all">All Varieties (10)</button>
+            <button class="variety-tab" data-filter="recommended">Highly Recommended (>84%)</button>
+            <button class="variety-tab" data-filter="feasible">Feasible with Amendments (65-84%)</button>
+            <button class="variety-tab" data-filter="challenging">Challenging (<65%)</button>
+          </div>
+          <span style="font-size: 12px; color: var(--text-dim);">Sorted by Soil & Climate Compatibility Score</span>
+        </div>
+
+        <div class="variety-grid" id="variety-cards-container">
+          <!-- Filled dynamically by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 & 4: PARAMETER SIMULATOR + INBUILT AI CHATBOT -->
+    <section class="dual-col-layout">
+
+      <!-- Interactive Soil & Sensor Extractor / Simulator -->
+      <div class="sim-panel">
+        <div class="section-head" style="margin-bottom: 4px;">
+          <div>
+            <h3 class="section-title"><i class="fa-solid fa-sliders"></i> Soil & Parameter Extractor</h3>
+            <p class="section-desc">Adjust soil parameters to extract and test mango plant feasibility in real-time</p>
+          </div>
+        </div>
+
+        <div class="sim-grid">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Soil Type Texture <span id="lbl-st">Alluvial Loam</span></label>
+            <select id="sim-soil-type" class="form-control">
+              <option value="Alluvial Loam">Alluvial Loam (Deep fertile plain soil - North & Gangetic plains)</option>
+              <option value="Laterite Soil">Laterite Soil (Red rocky porous - Ratnagiri, Konkan, Coastal)</option>
+              <option value="Red Sandy Loam">Red Sandy Loam (Well-drained - AP, Telangana, Karnataka)</option>
+              <option value="Medium Black Soil">Medium Black Soil (Regur - Saurashtra/Gujarat, Central India)</option>
+              <option value="Clayey Loam">Clayey Loam (Higher moisture retention, needs aeration)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Soil pH <span id="lbl-ph">6.6</span></label>
+            <input type="number" id="sim-ph" class="form-control" step="0.1" min="4.0" max="9.5" value="6.6">
+          </div>
+
+          <div class="form-group">
+            <label>Nitrogen (N) mg/kg <span id="lbl-n">145</span></label>
+            <input type="number" id="sim-n" class="form-control" step="5" min="40" max="350" value="145">
+          </div>
+
+          <div class="form-group">
+            <label>Phosphorus (P) mg/kg <span id="lbl-p">28</span></label>
+            <input type="number" id="sim-p" class="form-control" step="2" min="5" max="90" value="28">
+          </div>
+
+          <div class="form-group">
+            <label>Potassium (K) mg/kg <span id="lbl-k">185</span></label>
+            <input type="number" id="sim-k" class="form-control" step="5" min="50" max="400" value="185">
+          </div>
+
+          <div class="form-group">
+            <label>Soil Moisture % <span id="lbl-m">18.5</span></label>
+            <input type="number" id="sim-moisture" class="form-control" step="0.5" min="5" max="45" value="18.5">
+          </div>
+
+          <div class="form-group">
+            <label>Air Temp °C <span id="lbl-t">30.0</span></label>
+            <input type="number" id="sim-temp" class="form-control" step="0.5" min="15" max="48" value="30.0">
+          </div>
+
+          <div class="form-group">
+            <label>Humidity % <span id="lbl-h">58</span></label>
+            <input type="number" id="sim-humidity" class="form-control" step="1" min="15" max="95" value="58">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button id="sim-apply-btn" class="btn btn-gold" style="flex: 1;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Ingest & Recompute Feasibility
+          </button>
+          <button id="sim-preset-alphonso" class="btn" title="Load Konkan Alphonso Profile">
+            Alphonso Preset
+          </button>
+          <button id="sim-preset-kesar" class="btn" title="Load Gujarat Kesar Profile">
+            Kesar Preset
+          </button>
+        </div>
+      </div>
+
+      <!-- Inbuilt AI Chatbot (Bhoomi-IQ) -->
+      <div class="chat-panel" id="ai-chat-section">
+        <div class="chat-header">
+          <div class="chat-bot-id">
+            <div class="chat-bot-avatar">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="chat-bot-text">
+              <h4>Bhoomi-IQ AI Agronomist</h4>
+              <p><i class="fa-solid fa-circle" style="font-size: 8px;"></i> Live Soil Context Connected</p>
+            </div>
+          </div>
+          <span style="font-size: 11px; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: var(--radius-sm); color: var(--text-muted);">
+            English + Hinglish
+          </span>
+        </div>
+
+        <!-- Quick Question Chips -->
+        <div class="chat-quick-chips">
+          <div class="chip" data-q="Which mango variety is most feasible for my soil right now?">🥭 Which variety is feasible?</div>
+          <div class="chip" data-q="Alphonso aam ke liye meri mitti kaisi hai?">🇮🇳 Alphonso suitability?</div>
+          <div class="chip" data-q="How to fix my soil pH and NPK balance?">🧪 Fix pH & NPK</div>
+          <div class="chip" data-q="Abhi kitna sinchai (irrigation) dena chahiye?">💧 Irrigation Advice</div>
+        </div>
+
+        <!-- Message List -->
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg bot">
+            <div class="chat-bubble">
+              <b>Namaste & Welcome!</b> I am <b>Bhoomi-IQ</b>, your AI Orchard Agronomist. I continuously read your orchard's N, P, K, pH, moisture, and soil type to advise you on cultivar feasibility, fertilizer balancing, and irrigation schedules. Ask me anything in English or Hindi!
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Ask about soil, NPK, pH, or which mango plant to grow...">
+          <button id="chat-send-btn" class="btn btn-primary">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 5: HISTORICAL SENSOR CHARTS -->
+    <section class="card chart-box">
+      <div class="chart-header">
+        <div>
+          <h3 class="section-title"><i class="fa-solid fa-chart-line"></i> Historical Telemetry & Moisture Target Band</h3>
+          <p class="section-desc">Tracks soil moisture against the phenological target band, plus NPK and climate trends</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-sm" id="btn-chart-moisture" style="border-color: var(--emerald-400); color: var(--emerald-400);">Moisture Band</button>
+          <button class="btn btn-sm" id="btn-chart-npk">NPK Nutrients</button>
+          <button class="btn btn-sm" id="btn-chart-temp">Temp & RH</button>
+        </div>
+      </div>
+      <div style="position: relative; height: 300px; width: 100%;">
+        <canvas id="main-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- SECTION 6: AGENT DECISIONS & MANUAL VALVE AUTOMATION -->
+    <section class="controls-grid">
+      <!-- Agent Decision & Safety Guards -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-label"><i class="fa-solid fa-robot"></i> RL Agent Decision</span>
+          <span class="card-status-badge status-ok" id="agent-source-badge">DQN Safety-Guarded</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px;" id="agent-decision-title">
+          Evaluating irrigation requirement...
+        </div>
+        <div id="agent-explanation" style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+          No decisions recorded yet. Run the agent or simulate node telemetry to begin.
+        </div>
+        <ul id="agent-alerts-list" style="font-size: 12px; color: #f87171; list-style-type: none; display: flex; flex-direction: column; gap: 4px;"></ul>
+      </div>
+
+      <!-- Manual Valve Override -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-label"><i class="fa-solid fa-faucet-drip"></i> Valve Automation & Override</span>
+          <span class="card-status-badge status-ok" id="valve-status">Idle</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Manual override directly actuates the solenoid valve on the ESP32 node via MQTT/HTTP.
+        </p>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+          <input type="number" id="valve-min-input" class="form-control" style="width: 100px;" value="30" min="0" max="240">
+          <span style="font-size: 13px; color: var(--text-muted);">Minutes</span>
+          <button id="valve-open-btn" class="btn btn-primary" style="flex: 1;"><i class="fa-solid fa-play"></i> Open Valve</button>
+          <button id="valve-close-btn" class="btn" style="border-color: #ef4444; color: #f87171;"><i class="fa-solid fa-stop"></i> Close</button>
+        </div>
+        <div id="valve-msg" style="font-size: 12px; color: var(--emerald-400);"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Floating Chat Action Button -->
+  <button class="chat-fab" id="chat-fab-btn" title="Open AI Chatbot">
+    <i class="fa-solid fa-comment-dots"></i>
+  </button>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-msg">
+    <i class="fa-solid fa-check-circle" style="color: var(--emerald-400);"></i>
+    <span id="toast-text">Operation completed</span>
+  </div>
+
+  <script>
+    // Configuration & State
+    let currentZone = "zone1";
+    const KEY = new URLSearchParams(location.search).get("key") || "";
+    const headers = { "Content-Type": "application/json", ...(KEY ? { "x-api-key": KEY } : {}) };
+    let chartInstance = null;
+    let telemetryHistory = [];
+    let currentLatest = null;
+    let feasibilityData = null;
+    let activeChartMode = "moisture";
+
+    // Helper functions
+    const $ = id => document.getElementById(id);
+    async function api(url, options = {}) {
+      const res = await fetch(url, { ...options, headers: { ...headers, ...(options.headers || {}) } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+    function showToast(text) {
+      const t = $("toast-msg");
+      $("toast-text").textContent = text;
+      t.style.display = "flex";
+      setTimeout(() => { t.style.display = "none"; }, 3500);
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // Refresh Dashboard Data
+    async function loadDashboard() {
+      try {
+        // 1. Status
+        const st = await api("/api/status");
+        $("policy-status").textContent = `Policy: ${st.policy.toUpperCase()}`;
+        $("stage-status").textContent = `Stage: ${st.stage_now.replace('_', ' ').toUpperCase()}`;
+
+        // 2. Latest Telemetry
+        const lat = await api(`/api/latest?zone=${currentZone}`);
+        currentLatest = lat;
+        renderExtractedKPIs(lat);
+
+        // 3. Feasibility Analysis
+        loadFeasibility(lat);
+
+        // 4. Decision
+        loadDecisions();
+
+        // 5. Historical Chart
+        loadChart();
+
+      } catch (err) {
+        console.warn("Telemetry loading:", err);
+        $("last-updated").textContent = "Waiting for node telemetry... (click Ingest to simulate)";
+      }
+    }
+
+    // Render KPI Cards (N, P, K, pH, Moisture, Temp, Humidity, Soil Type)
+    function renderExtractedKPIs(d) {
+      // N
+      const n = d.nitrogen || 145;
+      $("val-n").textContent = n.toFixed(0);
+      const pctN = Math.min(100, Math.max(10, (n / 250) * 100));
+      $("gauge-n").style.width = pctN + "%";
+      if (n < 115) {
+        $("badge-n").textContent = "Low";
+        $("badge-n").className = "card-status-badge status-bad";
+      } else if (n > 210) {
+        $("badge-n").textContent = "High";
+        $("badge-n").className = "card-status-badge status-warn";
+      } else {
+        $("badge-n").textContent = "Optimal";
+        $("badge-n").className = "card-status-badge status-ok";
+      }
+
+      // P
+      const p = d.phosphorus || 28;
+      $("val-p").textContent = p.toFixed(0);
+      const pctP = Math.min(100, Math.max(10, (p / 60) * 100));
+      $("gauge-p").style.width = pctP + "%";
+      if (p < 18) {
+        $("badge-p").textContent = "Deficient";
+        $("badge-p").className = "card-status-badge status-bad";
+      } else {
+        $("badge-p").textContent = "Healthy";
+        $("badge-p").className = "card-status-badge status-ok";
+      }
+
+      // K
+      const k = d.potassium || 185;
+      $("val-k").textContent = k.toFixed(0);
+      const pctK = Math.min(100, Math.max(10, (k / 300) * 100));
+      $("gauge-k").style.width = pctK + "%";
+      if (k < 140) {
+        $("badge-k").textContent = "Low";
+        $("badge-k").className = "card-status-badge status-bad";
+      } else {
+        $("badge-k").textContent = "Optimal";
+        $("badge-k").className = "card-status-badge status-ok";
+      }
+
+      // pH
+      const ph = d.ph || 6.6;
+      $("val-ph").textContent = ph.toFixed(2);
+      const pctPh = Math.min(100, Math.max(10, ((ph - 4) / 5) * 100));
+      $("gauge-ph").style.width = pctPh + "%";
+      if (ph < 5.8) {
+        $("badge-ph").textContent = "Acidic";
+        $("badge-ph").className = "card-status-badge status-warn";
+        $("sub-ph").textContent = "Apply Agricultural Lime";
+      } else if (ph > 7.6) {
+        $("badge-ph").textContent = "Alkaline";
+        $("badge-ph").className = "card-status-badge status-warn";
+        $("sub-ph").textContent = "Apply Gypsum / Sulfur";
+      } else {
+        $("badge-ph").textContent = "Optimal (5.8-7.2)";
+        $("badge-ph").className = "card-status-badge status-ok";
+        $("sub-ph").textContent = "Ideal Nutrient Uptake";
+      }
+
+      // Soil Moisture
+      const sm = d.soil_moisture;
+      $("val-moisture").textContent = sm.toFixed(1);
+      const [lo, hi] = d.target_band || [12, 20];
+      $("target-band-text").textContent = `Target: ${lo} - ${hi} %`;
+      const pctSm = Math.min(100, Math.max(5, (sm / 40) * 100));
+      $("gauge-moisture").style.width = pctSm + "%";
+      if (sm < lo) {
+        $("badge-moisture").textContent = "Dry";
+        $("badge-moisture").className = "card-status-badge status-bad";
+        $("sub-moisture").textContent = "Deficit Stress Active";
+      } else if (sm > hi) {
+        $("badge-moisture").textContent = "Wet";
+        $("badge-moisture").className = "card-status-badge status-warn";
+        $("sub-moisture").textContent = "Aeration Limited";
+      } else {
+        $("badge-moisture").textContent = "In Target";
+        $("badge-moisture").className = "card-status-badge status-ok";
+        $("sub-moisture").textContent = "Healthy Growth Band";
+      }
+
+      // Temp & Humidity
+      $("val-temp").textContent = d.air_temp.toFixed(1);
+      $("val-soil-temp").textContent = (d.soil_temp || (d.air_temp - 2.1)).toFixed(1);
+      $("gauge-temp").style.width = Math.min(100, (d.air_temp / 45) * 100) + "%";
+
+      $("val-humidity").textContent = d.humidity.toFixed(0);
+      $("gauge-humidity").style.width = d.humidity + "%";
+
+      // Soil Type
+      const st = d.soil_type || "Alluvial Loam";
+      $("val-soil-type").textContent = st;
+
+      $("last-updated").textContent = `Node: ${d.node_id || 'sim'} | Last Sync: ${d.ts ? d.ts.slice(0, 19).replace('T', ' ') : 'Just now'}`;
+
+      // Update simulator inputs to match latest
+      $("sim-ph").value = ph.toFixed(2);
+      $("sim-n").value = n.toFixed(0);
+      $("sim-p").value = p.toFixed(0);
+      $("sim-k").value = k.toFixed(0);
+      $("sim-moisture").value = sm.toFixed(1);
+      $("sim-temp").value = d.air_temp.toFixed(1);
+      $("sim-humidity").value = d.humidity.toFixed(0);
+      $("sim-soil-type").value = st;
+    }
+
+    // Load Feasibility Data
+    async function loadFeasibility(d) {
+      try {
+        const url = `/api/mango-feasibility?zone=${currentZone}&soil_type=${encodeURIComponent(d.soil_type || 'Alluvial Loam')}&ph=${d.ph || 6.6}&nitrogen=${d.nitrogen || 145}&phosphorus=${d.phosphorus || 28}&potassium=${d.potassium || 185}&moisture=${d.soil_moisture}&air_temp=${d.air_temp}&humidity=${d.humidity}`;
+        const res = await api(url);
+        feasibilityData = res;
+
+        // Top pick hero
+        $("hero-top-variety").textContent = res.top_pick;
+        const topItem = res.recommendations[0];
+        $("hero-top-score").textContent = topItem.score + "%";
+        $("hero-top-badge").textContent = topItem.status;
+        $("hero-top-badge").className = `card-status-badge ${topItem.badge_color === 'emerald' ? 'status-ok' : (topItem.badge_color === 'amber' ? 'status-warn' : 'status-bad')}`;
+
+        // Health notes
+        const notesContainer = $("soil-health-notes");
+        notesContainer.innerHTML = res.soil_health_notes.map(n => `
+          <div class="health-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>${escapeHtml(n)}</span>
+          </div>
+        `).join("");
+
+        renderVarietyCards(res.recommendations);
+      } catch (e) {
+        console.error("Feasibility err:", e);
+      }
+    }
+
+    // Render Variety Cards
+    function renderVarietyCards(list, filter = "all") {
+      const container = $("variety-cards-container");
+      let filtered = list;
+      if (filter === "recommended") filtered = list.filter(x => x.score >= 84);
+      else if (filter === "feasible") filtered = list.filter(x => x.score >= 65 && x.score < 84);
+      else if (filter === "challenging") filtered = list.filter(x => x.score < 65);
+
+      container.innerHTML = filtered.map(v => {
+        const badgeClass = v.badge_color === "emerald" ? "badge-emerald" : (v.badge_color === "amber" ? "badge-amber" : "badge-rose");
+        return `
+          <div class="variety-card">
+            <div class="v-header">
+              <div class="v-title">
+                <h3>${escapeHtml(v.name)}</h3>
+                <span><i class="fa-solid fa-location-dot"></i> ${escapeHtml(v.native_region)}</span>
+              </div>
+              <div class="v-score-badge">
+                <span class="v-score-num" style="color: ${v.badge_color === 'emerald' ? 'var(--emerald-400)' : (v.badge_color === 'amber' ? 'var(--mango-gold)' : '#f87171')}">${v.score}%</span>
+                <span class="v-status-pill ${badgeClass}">${escapeHtml(v.status)}</span>
+              </div>
+            </div>
+
+            <p class="v-desc">${escapeHtml(v.description)}</p>
+
+            <div class="v-metric-bars">
+              <div class="v-bar-item">
+                <div class="v-bar-header"><span>Soil Texture</span><span>${v.soil_score}%</span></div>
+                <div class="v-bar-track"><div class="v-bar-fill" style="width: ${v.soil_score}%;"></div></div>
+              </div>
+              <div class="v-bar-item">
+                <div class="v-bar-header"><span>pH Match</span><span>${v.ph_score}%</span></div>
+                <div class="v-bar-track"><div class="v-bar-fill" style="width: ${v.ph_score}%; background: var(--sky-blue);"></div></div>
+              </div>
+              <div class="v-bar-item">
+                <div class="v-bar-header"><span>NPK Nutrients</span><span>${v.npk_score}%</span></div>
+                <div class="v-bar-track"><div class="v-bar-fill" style="width: ${v.npk_score}%; background: var(--mango-gold);"></div></div>
+              </div>
+              <div class="v-bar-item">
+                <div class="v-bar-header"><span>Climate & Temp</span><span>${v.climate_score}%</span></div>
+                <div class="v-bar-track"><div class="v-bar-fill" style="width: ${v.climate_score}%; background: var(--purple-accent);"></div></div>
+              </div>
+            </div>
+
+            <div class="v-specs">
+              <div><span>Soil Texture Match:</span> <strong>${escapeHtml(v.soil_match_label)}</strong></div>
+              <div><span>Target pH Range:</span> <strong>${escapeHtml(v.ideal_ph_range)}</strong></div>
+              <div><span>Yield Potential:</span> <strong>${escapeHtml(v.yield_potential)}</strong></div>
+            </div>
+
+            <div class="v-advice">
+              <i class="fa-solid fa-lightbulb"></i> <b>Agronomic Advice:</b> ${escapeHtml(v.special_advice)}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Tab Filters
+    document.querySelectorAll(".variety-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".variety-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        if (feasibilityData) {
+          renderVarietyCards(feasibilityData.recommendations, tab.dataset.filter);
+        }
+      });
+    });
+
+    // Ingest Simulated Telemetry
+    $("sim-apply-btn").onclick = async () => {
+      try {
+        const payload = {
+          node_id: "sim-interactive",
+          zone: currentZone,
+          soil_moisture: parseFloat($("sim-moisture").value),
+          ph: parseFloat($("sim-ph").value),
+          nitrogen: parseFloat($("sim-n").value),
+          phosphorus: parseFloat($("sim-p").value),
+          potassium: parseFloat($("sim-k").value),
+          air_temp: parseFloat($("sim-temp").value),
+          humidity: parseFloat($("sim-humidity").value),
+          soil_type: $("sim-soil-type").value,
+          battery: 3.94
+        };
+        await api("/api/telemetry", { method: "POST", body: JSON.stringify(payload) });
+        showToast("Extracted & Ingested new telemetry! Recomputing...");
+        await loadDashboard();
+      } catch (e) {
+        showToast("Ingest failed: " + e.message);
+      }
+    };
+
+    // Presets
+    $("sim-preset-alphonso").onclick = () => {
+      $("sim-soil-type").value = "Laterite Soil";
+      $("sim-ph").value = "6.2";
+      $("sim-n").value = "140";
+      $("sim-p").value = "30";
+      $("sim-k").value = "210";
+      $("sim-moisture").value = "16.5";
+      $("sim-temp").value = "31.0";
+      $("sim-humidity").value = "65";
+      $("sim-apply-btn").click();
+    };
+
+    $("sim-preset-kesar").onclick = () => {
+      $("sim-soil-type").value = "Medium Black Soil";
+      $("sim-ph").value = "7.4";
+      $("sim-n").value = "160";
+      $("sim-p").value = "32";
+      $("sim-k").value = "220";
+      $("sim-moisture").value = "17.0";
+      $("sim-temp").value = "34.0";
+      $("sim-humidity").value = "48";
+      $("sim-apply-btn").click();
+    };
+
+    // AI Chatbot Functionality
+    async function sendChatMessage(text) {
+      if (!text.trim()) return;
+      const msgList = $("chat-messages");
+
+      // Append User message
+      msgList.innerHTML += `
+        <div class="chat-msg user">
+          <div class="chat-bubble">${escapeHtml(text)}</div>
+        </div>
+      `;
+      msgList.scrollTop = msgList.scrollHeight;
+
+      // Loading indicator
+      const loaderId = "loader-" + Date.now();
+      msgList.innerHTML += `
+        <div class="chat-msg bot" id="${loaderId}">
+          <div class="chat-bubble"><i class="fa-solid fa-spinner fa-spin"></i> Bhoomi-IQ is analyzing your orchard parameters...</div>
+        </div>
+      `;
+      msgList.scrollTop = msgList.scrollHeight;
+
+      try {
+        const res = await api("/api/chat", {
+          method: "POST",
+          body: JSON.stringify({
+            message: text,
+            zone: currentZone,
+            context: currentLatest || {}
+          })
+        });
+
+        // Convert simple markdown to clean HTML
+        let formatted = escapeHtml(res.reply)
+          .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+          .replace(/\*(.*?)\*/g, '<i>$1</i>')
+          .replace(/\n\n/g, '<br><br>')
+          .replace(/\n/g, '<br>');
+
+        const loaderElem = $(loaderId);
+        if (loaderElem) {
+          loaderElem.innerHTML = `<div class="chat-bubble">${formatted}</div>`;
+        }
+      } catch (err) {
+        const loaderElem = $(loaderId);
+        if (loaderElem) {
+          loaderElem.innerHTML = `<div class="chat-bubble" style="color: #f87171;">Failed to reach AI agronomist: ${err.message}</div>`;
+        }
+      }
+      msgList.scrollTop = msgList.scrollHeight;
+    }
+
+    $("chat-send-btn").onclick = () => {
+      const input = $("chat-input");
+      const val = input.value;
+      input.value = "";
+      sendChatMessage(val);
+    };
+    $("chat-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") $("chat-send-btn").click();
+    });
+
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        sendChatMessage(chip.dataset.q);
+      });
+    });
+
+    $("chat-fab-btn").onclick = () => {
+      $("ai-chat-section").scrollIntoView({ behavior: "smooth" });
+      $("chat-input").focus();
+    };
+
+    // Load Historical Chart
+    async function loadChart() {
+      try {
+        const t = await api(`/api/telemetry?zone=${currentZone}&limit=120`);
+        telemetryHistory = t;
+        renderChart();
+      } catch (e) {
+        console.warn("Chart data load:", e);
+      }
+    }
+
+    function renderChart() {
+      const ctx = $("main-chart").getContext("2d");
+      const labels = telemetryHistory.map(x => (x.ts || "").slice(5, 16).replace("T", " "));
+
+      let datasets = [];
+      const [lo, hi] = (currentLatest && currentLatest.target_band) ? currentLatest.target_band : [12, 20];
+
+      if (activeChartMode === "moisture") {
+        datasets = [
+          {
+            label: "Soil Moisture (VWC %)",
+            data: telemetryHistory.map(x => x.soil_moisture),
+            borderColor: "#10b981",
+            backgroundColor: "rgba(16, 185, 129, 0.1)",
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2
+          },
+          {
+            label: "Target Low (" + lo + "%)",
+            data: telemetryHistory.map(_ => lo),
+            borderColor: "rgba(255, 255, 255, 0.4)",
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false
+          },
+          {
+            label: "Target High (" + hi + "%)",
+            data: telemetryHistory.map(_ => hi),
+            borderColor: "rgba(255, 255, 255, 0.4)",
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false
+          }
+        ];
+      } else if (activeChartMode === "npk") {
+        datasets = [
+          {
+            label: "Nitrogen (N)",
+            data: telemetryHistory.map(x => x.nitrogen || 145),
+            borderColor: "#10b981",
+            tension: 0.3,
+            borderWidth: 2
+          },
+          {
+            label: "Phosphorus (P)",
+            data: telemetryHistory.map(x => (x.phosphorus || 28) * 4), // Scaled for visualization
+            borderColor: "#fb8500",
+            tension: 0.3,
+            borderWidth: 2
+          },
+          {
+            label: "Potassium (K)",
+            data: telemetryHistory.map(x => x.potassium || 185),
+            borderColor: "#a855f7",
+            tension: 0.3,
+            borderWidth: 2
+          }
+        ];
+      } else if (activeChartMode === "temp") {
+        datasets = [
+          {
+            label: "Air Temp (°C)",
+            data: telemetryHistory.map(x => x.air_temp),
+            borderColor: "#ffb703",
+            tension: 0.3,
+            borderWidth: 2
+          },
+          {
+            label: "Humidity (% RH)",
+            data: telemetryHistory.map(x => x.humidity),
+            borderColor: "#38bdf8",
+            tension: 0.3,
+            borderWidth: 2
+          }
+        ];
+      }
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      chartInstance = new Chart(ctx, {
+        type: "line",
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: { color: "rgba(255, 255, 255, 0.05)" },
+              ticks: { color: "#8fa893", maxTicksLimit: 8 }
+            },
+            y: {
+              grid: { color: "rgba(255, 255, 255, 0.05)" },
+              ticks: { color: "#8fa893" }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: "#f0f7f1" } }
+          }
+        }
+      });
+    }
+
+    $("btn-chart-moisture").onclick = () => { activeChartMode = "moisture"; renderChart(); };
+    $("btn-chart-npk").onclick = () => { activeChartMode = "npk"; renderChart(); };
+    $("btn-chart-temp").onclick = () => { activeChartMode = "temp"; renderChart(); };
+
+    // Decisions & Valve
+    async function loadDecisions() {
+      try {
+        const decs = await api("/api/decisions?limit=5");
+        if (decs && decs.length) {
+          const d = decs[0];
+          $("agent-decision-title").textContent = `${d.stage.replace('_', ' ').toUpperCase()} • Approved: ${d.approved_mm} mm (${d.minutes} min valve)`;
+          $("agent-explanation").textContent = d.explanation;
+          const alertsList = $("agent-alerts-list");
+          alertsList.innerHTML = [
+            ...(d.alerts || []).map(a => `<li><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(a)}</li>`),
+            ...(d.advisories || []).map(a => `<li style="color: var(--mango-gold);"><i class="fa-solid fa-circle-info"></i> ${escapeHtml(a)}</li>`)
+          ].join("");
+        }
+      } catch (e) {}
+    }
+
+    $("run-agent-btn").onclick = async () => {
+      try {
+        showToast("Running DQN agent decision cycle...");
+        await api(`/api/agent/run?zone=${currentZone}&force=true`, { method: "POST" });
+        await loadDashboard();
+        showToast("Agent decision completed!");
+      } catch (e) {
+        showToast("Agent error: " + e.message);
+      }
+    };
+
+    $("valve-open-btn").onclick = async () => {
+      const min = parseInt($("valve-min-input").value) || 30;
+      try {
+        await api("/api/valve", { method: "POST", body: JSON.stringify({ zone: currentZone, minutes: min }) });
+        $("valve-status").textContent = `Valve Active (${min}m)`;
+        $("valve-msg").textContent = `Command sent: Solenoid Open for ${min} minutes.`;
+        showToast(`Valve opened for ${min} min!`);
+      } catch (e) {
+        $("valve-msg").textContent = "Error: " + e.message;
+      }
+    };
+
+    $("valve-close-btn").onclick = async () => {
+      try {
+        await api("/api/valve", { method: "POST", body: JSON.stringify({ zone: currentZone, minutes: 0 }) });
+        $("valve-status").textContent = "Closed";
+        $("valve-msg").textContent = "Command sent: Emergency Valve Shutoff.";
+        showToast("Valve closed.");
+      } catch (e) {
+        $("valve-msg").textContent = "Error: " + e.message;
+      }
+    };
+
+    $("zone-select").addEventListener("change", (e) => {
+      currentZone = e.target.value;
+      loadDashboard();
+    });
+
+    $("refresh-btn").onclick = () => {
+      loadDashboard();
+      showToast("Refreshed live sensor data");
+    };
+
+    // Auto-refresh every 12 seconds
+    loadDashboard();
+    setInterval(loadDashboard, 12000);
+  </script>
+</body>
+</html>
