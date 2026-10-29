@@ -1,0 +1,8 @@
+,in_band,in_band,below,below,above,above,water,water,drainage,drainage,events,events,stress_days,stress_days
+,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+policy,,,,,,,,,,,,,,
+No irrigation,33.95,5.71,42.26,4.63,23.79,6.81,0.0,0.0,364.5,239.5,0.0,0.0,105.43,18.3
+Fixed schedule,9.61,3.17,16.26,1.8,74.14,3.92,1464.0,0.0,1035.35,279.62,122.0,0.0,0.0,0.0
+Threshold rule,63.36,5.36,9.82,0.78,26.82,5.77,741.07,61.46,415.02,238.95,37.17,3.1,0.0,0.0
+DQN,72.33,5.94,0.58,0.39,27.09,6.04,751.2,64.99,416.02,238.8,98.2,7.84,0.03,0.18
+Agentic (DQN + guard),72.16,5.7,0.96,0.87,26.89,5.96,748.0,66.65,413.31,237.08,94.23,8.31,0.0,0.0

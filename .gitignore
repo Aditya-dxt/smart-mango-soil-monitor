@@ -14,7 +14,8 @@ __pycache__/
 htmlcov/
 
 # Local runtime database
-data/
+data/*.db
+data/*.sqlite3
 *.db
 *.sqlite3
 

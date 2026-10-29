@@ -1,0 +1,7 @@
+fault,policy,water_window,drain_window,inband_window,below_window,above_window,alert_days
+Dead probe (reads 0%),DQN,1200.0,758.58,2.44,0.0,97.56,0.0
+Dead probe (reads 0%),Agentic (DQN + guard),0.0,0.0,3.0,97.0,0.0,60.07
+Stuck reading (frozen),DQN,577.13,185.6,38.61,16.5,44.89,0.0
+Stuck reading (frozen),Agentic (DQN + guard),15.8,0.0,7.06,92.94,0.0,58.07
+Dry drift (-6 pp),DQN,563.6,136.23,27.72,0.0,72.28,0.0
+Dry drift (-6 pp),Agentic (DQN + guard),480.67,56.03,56.56,0.0,43.44,0.07

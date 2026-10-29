@@ -111,7 +111,13 @@ class DQNAgent:
 
     def load(self, path):
         z = np.load(path)
-        for i in range(len(self.q.W)):
-            self.q.W[i][...] = z[f"W{i}"]
-            self.q.b[i][...] = z[f"b{i}"]
+        k = len(self.q.W)
+        if "arr_0" in z:
+            for i in range(k):
+                self.q.W[i][...] = z[f"arr_{i}"]
+                self.q.b[i][...] = z[f"arr_{i + k}"]
+        else:
+            for i in range(k):
+                self.q.W[i][...] = z[f"W{i}"]
+                self.q.b[i][...] = z[f"b{i}"]
         self.target.copy_from(self.q)

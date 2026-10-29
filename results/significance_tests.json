@@ -1,0 +1,50 @@
+{
+  "agentic_vs_Threshold rule_in_band": {
+    "mean_diff": 8.794520547945206,
+    "p_wilcoxon": 1.7213435893906393e-06
+  },
+  "agentic_vs_Threshold rule_below": {
+    "mean_diff": -8.858447488584476,
+    "p_wilcoxon": 1.6965526182776899e-06
+  },
+  "agentic_vs_Threshold rule_water": {
+    "mean_diff": 6.931973541420973,
+    "p_wilcoxon": 0.006639536470174789
+  },
+  "agentic_vs_Threshold rule_drainage": {
+    "mean_diff": -1.7191297170031727,
+    "p_wilcoxon": 0.5561132747679949
+  },
+  "agentic_vs_DQN_in_band": {
+    "mean_diff": -0.1735159817351596,
+    "p_wilcoxon": 0.35140472099939046
+  },
+  "agentic_vs_DQN_below": {
+    "mean_diff": 0.37442922374429227,
+    "p_wilcoxon": 0.0014634503719064577
+  },
+  "agentic_vs_DQN_water": {
+    "mean_diff": -3.2,
+    "p_wilcoxon": 0.00899140818595844
+  },
+  "agentic_vs_DQN_drainage": {
+    "mean_diff": -2.7137785471615397,
+    "p_wilcoxon": 0.008826199156108227
+  },
+  "agentic_vs_Fixed schedule_in_band": {
+    "mean_diff": 62.54794520547946,
+    "p_wilcoxon": 1.732216233144114e-06
+  },
+  "agentic_vs_Fixed schedule_below": {
+    "mean_diff": -15.296803652968038,
+    "p_wilcoxon": 1.7105279932400777e-06
+  },
+  "agentic_vs_Fixed schedule_water": {
+    "mean_diff": -716.0,
+    "p_wilcoxon": 1.7235135468062213e-06
+  },
+  "agentic_vs_Fixed schedule_drainage": {
+    "mean_diff": -622.0414446835811,
+    "p_wilcoxon": 1.862645149230957e-09
+  }
+}
