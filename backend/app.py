@@ -260,7 +260,7 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
     @app.get('/api/dataset/summary')
     def dataset_summary():
         report_path = ROOT / 'results' / 'ml_dataset_test_report.json'
-        csv_path = ROOT / 'data' / 'synthetic_orchard_dataset_5000.csv'
+        csv_path = ROOT / 'data' / 'synthetic_soil_dataset_5000.csv'
         if report_path.exists():
             import json as _json
             with open(report_path, 'r', encoding='utf-8') as f:
@@ -272,7 +272,7 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
 
     @app.get('/api/dataset/sample')
     def dataset_sample(limit: int = 10, offset: int = 0):
-        csv_path = ROOT / 'data' / 'synthetic_orchard_dataset_5000.csv'
+        csv_path = ROOT / 'data' / 'synthetic_soil_dataset_5000.csv'
         if not csv_path.exists():
             raise HTTPException(404, 'Dataset file not found')
         import csv as _csv

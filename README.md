@@ -463,10 +463,10 @@ This publishes fake telemetry so you can build and test the backend, dashboard a
 
 ### 7️⃣ Synthetic ML Testing Dataset (5,000 Records)
 
-Test the complete ML pipeline (Double-DQN Agent + Safety Guard + Mango Cultivar Feasibility Engine) on a multi-seasonal 5,000-record synthetic dataset:
+A 5,000-record synthetic dataset formatted with the exact 7 key soil & environmental monitoring parameters (Nitrogen, Phosphorous, Potassium, Soil moisture, Ph, Soil temprature, Soil humidity):
 
 ```bash
-# Generate / inspect dataset (creates data/synthetic_orchard_dataset_5000.csv)
+# Generate / inspect dataset (creates data/synthetic_soil_dataset_5000.csv)
 python scripts/generate_synthetic_dataset.py
 
 # Run the comprehensive ML benchmark and evaluation suite

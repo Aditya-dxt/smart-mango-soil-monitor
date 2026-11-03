@@ -1,80 +1,33 @@
 {
   "dataset_records": 5000,
-  "dqn_inference": {
-    "action_match_rate_pct": 89.4,
-    "mean_q_error": 0.241049,
-    "max_q_error": 6.695052,
-    "action_distribution": {
-      "0.0mm": "70.0%",
-      "6.0mm": "14.6%",
-      "12.0mm": "4.2%",
-      "20.0mm": "11.2%"
-    },
-    "mean_max_q_value": 21.38,
-    "throughput_samples_per_sec": 55416.2,
-    "latency_microseconds_per_sample": 18.05
+  "columns": [
+    "Nitrogen",
+    "Phosphorous",
+    "Potassium",
+    "Soil moisture",
+    "Ph",
+    "Soil temprature",
+    "Soil humidity"
+  ],
+  "dqn_throughput_samples_per_sec": 70580.3,
+  "dqn_latency_us": 14.17,
+  "dqn_action_distribution": {
+    "0.0mm": "2.4%",
+    "6.0mm": "0.2%",
+    "12.0mm": "1.0%",
+    "20.0mm": "96.5%"
   },
-  "safety_guard": {
-    "override_rate_pct": 31.86,
-    "top_interventions": [
-      [
-        "soil already at or above target band",
-        1144
-      ],
-      [
-        "pre-flowering: mild dryness is intentional",
-        359
-      ],
-      [
-        "rain today/forecast is enough",
-        90
-      ]
-    ]
-  },
-  "cultivar_feasibility": {
-    "variety_prediction_consistency_pct": 100.0,
-    "mean_score_deviation": 0.0,
-    "top_cultivar_distribution": [
-      [
-        "Alphonso (Hapus)",
-        1495
-      ],
-      [
-        "Totapuri (Collector / Ginimoothi)",
-        1288
-      ],
-      [
-        "Kesar (Gir Kesar)",
-        1105
-      ],
-      [
-        "Neelum",
-        478
-      ],
-      [
-        "Langra (Banarasi)",
-        198
-      ],
-      [
-        "Dasheri",
-        144
-      ],
-      [
-        "Amrapali (Dasheri x Neelum)",
-        141
-      ],
-      [
-        "Mallika (Neelum x Dasheri)",
-        136
-      ],
-      [
-        "Chaunsa (Samar Bahisht)",
-        12
-      ],
-      [
-        "Banganapalli (Benishan / Safeda)",
-        3
-      ]
-    ]
+  "guard_override_rate_pct": 0.1,
+  "cultivar_distribution": {
+    "Alphonso (Hapus)": 1654,
+    "Langra (Banarasi)": 848,
+    "Kesar (Gir Kesar)": 415,
+    "Amrapali (Dasheri x Neelum)": 357,
+    "Dasheri": 477,
+    "Neelum": 643,
+    "Chaunsa (Samar Bahisht)": 42,
+    "Mallika (Neelum x Dasheri)": 119,
+    "Totapuri (Collector / Ginimoothi)": 432,
+    "Banganapalli (Benishan / Safeda)": 13
   }
 }
