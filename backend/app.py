@@ -257,6 +257,36 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
     def commands(limit: int = 50):
         return db.recent_commands(limit)
 
+    @app.get('/api/dataset/summary')
+    def dataset_summary():
+        report_path = ROOT / 'results' / 'ml_dataset_test_report.json'
+        csv_path = ROOT / 'data' / 'synthetic_orchard_dataset_5000.csv'
+        if report_path.exists():
+            import json as _json
+            with open(report_path, 'r', encoding='utf-8') as f:
+                return _json.load(f)
+        return {
+            'dataset_exists': csv_path.exists(),
+            'file_size_kb': round(csv_path.stat().st_size / 1024, 1) if csv_path.exists() else 0
+        }
+
+    @app.get('/api/dataset/sample')
+    def dataset_sample(limit: int = 10, offset: int = 0):
+        csv_path = ROOT / 'data' / 'synthetic_orchard_dataset_5000.csv'
+        if not csv_path.exists():
+            raise HTTPException(404, 'Dataset file not found')
+        import csv as _csv
+        rows = []
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = _csv.DictReader(f)
+            for idx, r in enumerate(reader):
+                if idx < offset:
+                    continue
+                rows.append(r)
+                if len(rows) >= min(limit, 100):
+                    break
+        return {'total_records': 5000, 'offset': offset, 'limit': len(rows), 'records': rows}
+
     dash = ROOT / "dashboard"
     if dash.exists():
         app.mount("/static", StaticFiles(directory=dash), name="static")

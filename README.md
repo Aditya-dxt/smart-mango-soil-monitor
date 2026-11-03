@@ -460,6 +460,24 @@ python scripts/simulate_node.py --node mango-node-01
 
 This publishes fake telemetry so you can build and test the backend, dashboard and agent before the sensors arrive.
 
+
+### 7️⃣ Synthetic ML Testing Dataset (5,000 Records)
+
+Test the complete ML pipeline (Double-DQN Agent + Safety Guard + Mango Cultivar Feasibility Engine) on a multi-seasonal 5,000-record synthetic dataset:
+
+```bash
+# Generate / inspect dataset (creates data/synthetic_orchard_dataset_5000.csv)
+python scripts/generate_synthetic_dataset.py
+
+# Run the comprehensive ML benchmark and evaluation suite
+python scripts/test_ml_dataset.py
+```
+
+This evaluates:
+- **Double-DQN Reinforcement Learning**: State vector forward-pass, Q-value predictions, action selection distribution, and ~55,000 samples/sec throughput.
+- **Safety Guard Policy**: Rejection/override rates for rain, saturation caps, and pre-flowering water deficit preservation.
+- **Mango Variety Feasibility Engine**: Soil texture, pH, and NPK nutrient suitability across 10 commercial cultivars (Alphonso, Kesar, Dasheri, Langra, Totapuri, etc.).
+
 ---
 
 ## 🗺️ Roadmap
