@@ -399,6 +399,11 @@ smart-mango-soil-monitor/
 ## 🚀 Getting Started
 
 > 🚧 The project is under active development. Commands below show the intended workflow and will be finalized as each module lands.
+### Arduino IDE sensor test firmware
+
+The current ESP32 serial-only sensor sketch and its wiring, library, and calibration instructions are in [`firmware/arduino_ide_mango_soil`](firmware/arduino_ide_mango_soil/README.md). It reads capacitive soil moisture, DHT11 temperature/humidity, and PH-4502C analog output. This hardware test does not connect to Firebase or MQTT. Calibration values are setup-specific and the pH constants remain unverified without pH 4.00 and 7.00 buffer measurements.
+
+The older MQTT-oriented firmware template remains in `firmware/esp32_node`.
 
 ### 1️⃣ Clone
 

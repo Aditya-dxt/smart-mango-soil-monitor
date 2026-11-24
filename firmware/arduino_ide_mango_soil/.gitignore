@@ -1,0 +1,11 @@
+# Local credentials/configuration (never commit)
+cloud_config.h
+secrets.h
+credentials.h
+private_config.h
+*.local.h
+
+# Local serial monitor captures
+*.serial.log
+serial-*.csv
+capture-*.csv
