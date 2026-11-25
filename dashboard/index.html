@@ -1252,6 +1252,20 @@
 
     <!-- SECTION 6: AGENT DECISIONS & MANUAL VALVE AUTOMATION -->
     <section class="controls-grid">
+      <!-- Seven-day forecast-aware irrigation advice -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-label"><i class="fa-solid fa-cloud-rain"></i> 7-Day Irrigation Outlook</span>
+          <span class="card-status-badge status-warn" id="weather-source-badge">Forecast unavailable</span>
+        </div>
+        <div id="weather-recommendation" style="font-size: 14px; font-weight: 600; color: #fff; line-height: 1.5; margin-bottom: 12px;">
+          Set LAT and LON on the backend to load a local forecast.
+        </div>
+        <div id="weather-week-total" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;"></div>
+        <div id="weather-days" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px;"></div>
+        <div id="weather-updated" style="font-size: 10px; color: var(--text-muted); margin-top: 10px;"></div>
+      </div>
+
       <!-- Agent Decision & Safety Guards -->
       <div class="card">
         <div class="card-top">
@@ -1346,12 +1360,42 @@
         // 4. Decision
         loadDecisions();
 
+        // 4a. Seven-day forecast-aware irrigation advice
+        loadWeatherOutlook();
+
         // 5. Historical Chart
         loadChart();
 
       } catch (err) {
         console.warn("Telemetry loading:", err);
         $("last-updated").textContent = "Waiting for node telemetry... (click Ingest to simulate)";
+      }
+    }
+
+    async function loadWeatherOutlook() {
+      try {
+        const result = await api(`/api/irrigation/outlook?zone=${encodeURIComponent(currentZone)}`);
+        const { forecast, recommendation } = result;
+        $("weather-recommendation").textContent = recommendation.summary;
+        const badge = $("weather-source-badge");
+        badge.textContent = forecast ? `${forecast.source} • 7 days` : "Forecast unavailable";
+        badge.className = `card-status-badge ${forecast ? "status-ok" : "status-warn"}`;
+        $("weather-week-total").textContent = forecast
+          ? `Expected rainfall this week: ${recommendation.rain_next_7d_mm} mm • Rain in next 48 h: ${recommendation.rain_next_48h_mm} mm`
+          : "Set LAT and LON in the backend environment to enable local forecast data.";
+        const days = forecast?.forecast || [];
+        $("weather-days").innerHTML = days.map(day => {
+          const date = new Date(`${day.date}T12:00:00`);
+          const label = date.toLocaleDateString(undefined, { weekday: "short" });
+          const chance = day.rain_probability_pct == null ? "" : `<div style="font-size:10px;color:var(--text-muted)">${Math.round(day.rain_probability_pct)}%</div>`;
+          return `<div style="text-align:center;padding:7px 3px;border:1px solid rgba(255,255,255,.08);border-radius:8px"><div style="font-size:10px;color:var(--text-muted)">${escapeHtml(label)}</div><div style="font-size:12px;color:#fff;margin-top:4px">${Number(day.rain_mm).toFixed(0)} mm</div>${chance}</div>`;
+        }).join("");
+        $("weather-updated").textContent = forecast?.fetched_at
+          ? `Updated ${new Date(forecast.fetched_at).toLocaleString()} • Advice is informational; check local conditions.`
+          : "Advice is informational and does not control the valve.";
+      } catch (err) {
+        $("weather-source-badge").textContent = "Weather service offline";
+        $("weather-recommendation").textContent = "Forecast service is unavailable. Use current soil readings and local weather guidance.";
       }
     }
 

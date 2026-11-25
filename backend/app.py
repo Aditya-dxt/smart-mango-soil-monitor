@@ -1,8 +1,9 @@
 """FastAPI service: telemetry ingest, agent decisions, valve commands, dashboard."""
 from __future__ import annotations
-import asyncio, os, statistics
+import asyncio, os, statistics, time
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Header
@@ -21,6 +22,7 @@ from mangoagent.chatbot import answer_query
 from .db import DB
 from .mqtt_bridge import MqttBridge
 from .weather_provider import fetch_open_meteo
+from .irrigation_advisor import recommend_irrigation
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -70,7 +72,8 @@ def load_policy(weights: Path):
 def create_app(db_path: str | None = None, weights: str | None = None, autorun: bool = True) -> FastAPI:
     db = DB(db_path or os.getenv("DB_PATH", "data/orchard.db"))
     policy, policy_name = load_policy(Path(weights or ROOT / "results" / "dqn_weights.npz"))
-    state = {"weather": WeatherIn().model_dump()}
+    state = {"weather": WeatherIn().model_dump(), "forecast": None,
+             "forecast_fetched_mono": 0.0, "forecast_attempt_mono": 0.0}
     api_key = os.getenv("API_KEY")  # optional shared secret for write endpoints
     bridge = MqttBridge(lambda p: ingest(Telemetry(**p)))
 
@@ -84,6 +87,25 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
     def send_valve(zone: str, minutes: int, source: str = "agent"):
         db.add_command(ref_now(zone).isoformat(timespec="seconds"), zone, minutes, source)
         bridge.send_command(zone, minutes)
+
+    def get_forecast(force: bool = False):
+        """Cache the provider response to avoid calls on every dashboard refresh."""
+        if not (os.getenv("LAT") and os.getenv("LON")):
+            return None
+        if (not force and state["forecast"]
+                and time.monotonic() - state["forecast_fetched_mono"] < 3 * 60 * 60):
+            return state["forecast"]
+        if not force and time.monotonic() - state["forecast_attempt_mono"] < 15 * 60:
+            return state["forecast"]
+        state["forecast_attempt_mono"] = time.monotonic()
+        try:
+            result = fetch_open_meteo(float(os.getenv("LAT")), float(os.getenv("LON")))
+        except (TypeError, ValueError):
+            result = None
+        if result:
+            state["forecast"] = result
+            state["forecast_fetched_mono"] = time.monotonic()
+        return result
 
     agent = OrchardAgent(policy, actuate=lambda z, m: send_valve(z, m, "agent"),
                          explain=make_advisor())
@@ -115,10 +137,9 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
         if cmds:
             since = max(0, int((now_ref - datetime.fromisoformat(cmds[0]["ts"]).replace(tzinfo=timezone.utc)).total_seconds() // 86400))
         w = dict(state["weather"])
-        if os.getenv("LAT") and os.getenv("LON"):
-            live = fetch_open_meteo(float(os.getenv("LAT")), float(os.getenv("LON")))
-            if live:
-                w = live
+        live = get_forecast()
+        if live:
+            w = live
         d = agent.decide(
             zone, theta=theta,
             temp=statistics.mean([r["air_temp"] for r in recent]) if recent else 25.0,
@@ -161,6 +182,23 @@ def create_app(db_path: str | None = None, weights: str | None = None, autorun: 
     def status():
         return {"ok": True, "policy": policy_name, "stage_now": C.stage_for_month(datetime.now().month),
                 "weather": state["weather"]}
+
+    @app.get("/api/irrigation/outlook")
+    def irrigation_outlook(zone: str = "zone1", refresh: bool = False):
+        rows = db.telemetry(zone, 1)
+        latest_row = rows[-1] if rows else None
+        forecast = get_forecast(force=refresh)
+        try:
+            month = datetime.now(ZoneInfo(forecast["timezone"])).month if forecast else datetime.now().month
+        except Exception:
+            month = datetime.now().month
+        advice = recommend_irrigation(
+            latest_row["soil_moisture"] if latest_row else None,
+            month,
+            forecast.get("forecast") if forecast else None,
+            sensor_ok=latest_row is not None,
+        )
+        return {"forecast": forecast, "recommendation": advice}
 
     @app.post("/api/telemetry")
     def post_telemetry(t: Telemetry, x_api_key: str | None = Header(None)):

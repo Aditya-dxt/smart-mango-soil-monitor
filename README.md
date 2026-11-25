@@ -100,6 +100,14 @@
 - 🥭 **Growth-stage-aware** recommendations (dormant, flowering, fruit set, fruit growth)
 - 🛡️ **Rule-based safety layer** underneath the AI, so critical limits are never missed
 
+### 🌦️ Seven-day irrigation outlook
+
+The backend can fetch a seven-day Open-Meteo forecast for the configured orchard coordinates. The dashboard combines forecast rainfall and probability with the latest soil-moisture reading and growth-stage target band to advise whether to hold, wait and recheck, monitor, or consider irrigation. This outlook is advisory only and never opens the valve. Forecasts are cached for up to three hours; failed requests are retried after a short cooldown.
+
+Set `LAT` and `LON` in the backend environment to enable live weather. The forecast endpoint is `GET /api/irrigation/outlook?zone=zone1`; add `&refresh=true` to request an update. Open-Meteo needs no API key for ordinary access. The dashboard displays rainfall amounts and probabilities for each forecast day.
+
+Rain thresholds in `backend/irrigation_advisor.py` are initial heuristics, not validated mango agronomy. Calibrate them and the moisture target bands in `mangoagent/config.py` for the orchard's probe, soil, drainage and growth stage before relying on the advice. A seven-day forecast is uncertain at orchard scale; check measured soil moisture and local advisories, especially before automated irrigation.
+
 ### 🖥️ Dashboard
 - 📈 Live gauges and historical charts
 - 💯 **Soil Health Score** from 0 to 100
@@ -431,8 +439,9 @@ DATABASE_URL=postgresql://user:password@host:5432/soil
 # AI agent
 ANTHROPIC_API_KEY=your-key
 
-# Weather (optional)
-WEATHER_API_KEY=your-key
+# Weather (optional; Open-Meteo)
+LAT=26.8467
+LON=80.9462
 ```
 
 ### 3️⃣ Flash the firmware
